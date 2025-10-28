@@ -13,6 +13,10 @@ body {
     align-items: stretch;
     overflow: hidden;
     touch-action: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .game-root {
