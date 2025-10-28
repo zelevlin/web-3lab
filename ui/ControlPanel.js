@@ -4,11 +4,9 @@ export class ControlPanel {
         this.root = this.document.createElement('section');
         this.root.className = 'control-panel';
         this.actionsContainer = null;
-        this.mobileContainer = null;
         this.newGameButton = null;
         this.undoButton = null;
         this.leaderboardButton = null;
-        this.directionCallbacks = [];
         this.newGameCallbacks = [];
         this.undoCallbacks = [];
         this.leaderboardCallbacks = [];
@@ -41,15 +39,7 @@ export class ControlPanel {
         this.actionsContainer.appendChild(this.undoButton);
         this.actionsContainer.appendChild(this.leaderboardButton);
 
-        this.mobileContainer = this.document.createElement('div');
-        this.mobileContainer.className = 'control-panel__mobile';
-        this.createDirectionButton('↑', 'up', 'control-panel__mobile-button--up');
-        this.createDirectionButton('←', 'left', 'control-panel__mobile-button--left');
-        this.createDirectionButton('↓', 'down', 'control-panel__mobile-button--down');
-        this.createDirectionButton('→', 'right', 'control-panel__mobile-button--right');
-
         this.root.appendChild(this.actionsContainer);
-        this.root.appendChild(this.mobileContainer);
     }
 
     buildActionButton(label) {
@@ -58,18 +48,6 @@ export class ControlPanel {
         button.className = 'control-panel__button';
         button.textContent = label;
         return button;
-    }
-
-    createDirectionButton(label, direction, modifierClass) {
-        const button = this.document.createElement('button');
-        button.type = 'button';
-        button.className = `control-panel__mobile-button ${modifierClass}`;
-        button.textContent = label;
-        button.dataset.direction = direction;
-        button.addEventListener('click', () => {
-            this.emitDirection(direction);
-        });
-        this.mobileContainer.appendChild(button);
     }
 
     attach(parent) {
@@ -86,17 +64,6 @@ export class ControlPanel {
 
     onLeaderboard(callback) {
         this.leaderboardCallbacks.push(callback);
-    }
-
-    onDirection(callback) {
-        this.directionCallbacks.push(callback);
-    }
-
-    emitDirection(direction) {
-        for (let index = 0; index < this.directionCallbacks.length; index += 1) {
-            const callback = this.directionCallbacks[index];
-            callback(direction);
-        }
     }
 
     emitCallbacks(callbacks) {

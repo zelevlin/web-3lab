@@ -6,6 +6,7 @@ export class GameController {
         dialogManager,
         controlPanel,
         stateRepository,
+        gestureController,
         leaderboardRepository,
         storageKey,
         leaderboardKey
@@ -15,6 +16,7 @@ export class GameController {
         this.boardView = boardView;
         this.dialogManager = dialogManager;
         this.controlPanel = controlPanel;
+        this.gestureController = gestureController || null;
         this.stateRepository = stateRepository;
         this.leaderboardRepository = leaderboardRepository;
         this.storageKey = storageKey;
@@ -31,6 +33,7 @@ export class GameController {
         this.registerControlPanelHandlers();
         this.registerDialogHandlers();
         this.registerKeyboardHandlers();
+        this.registerGestureHandlers();
         this.restoreState();
     }
 
@@ -44,9 +47,6 @@ export class GameController {
         this.controlPanel.onLeaderboard(() => {
             this.showLeaderboard();
         });
-        this.controlPanel.onDirection((direction) => {
-            this.handleMove(direction);
-        });
     }
 
     registerDialogHandlers() {
@@ -57,16 +57,31 @@ export class GameController {
             this.dialogManager.hide();
             this.isOverlayVisible = false;
             this.controlPanel.setHidden(false);
+            if (this.gestureController) {
+                this.gestureController.setEnabled(true);
+            }
             this.startNewGame();
         });
         this.dialogManager.onClose(() => {
             this.isOverlayVisible = false;
             this.controlPanel.setHidden(false);
+            if (this.gestureController) {
+                this.gestureController.setEnabled(true);
+            }
         });
     }
 
     registerKeyboardHandlers() {
         window.addEventListener('keydown', this.keyboardHandler);
+    }
+
+    registerGestureHandlers() {
+        if (!this.gestureController) {
+            return;
+        }
+        this.gestureController.onDirection((direction) => {
+            this.handleMove(direction);
+        });
     }
 
     restoreState() {
@@ -78,6 +93,9 @@ export class GameController {
             this.dialogManager.hide();
             this.controlPanel.setHidden(false);
             this.isOverlayVisible = false;
+            if (this.gestureController) {
+                this.gestureController.setEnabled(true);
+            }
             this.saveState();
             return;
         }
@@ -93,6 +111,9 @@ export class GameController {
             this.dialogManager.hide();
             this.controlPanel.setHidden(false);
             this.isOverlayVisible = false;
+            if (this.gestureController) {
+                this.gestureController.setEnabled(true);
+            }
         }
     }
 
@@ -104,6 +125,9 @@ export class GameController {
         this.controlPanel.setUndoEnabled(false);
         this.controlPanel.setHidden(false);
         this.isOverlayVisible = false;
+        if (this.gestureController) {
+            this.gestureController.setEnabled(true);
+        }
         this.saveState();
     }
 
@@ -162,6 +186,9 @@ export class GameController {
     showGameOver(score, recordAlreadySaved) {
         this.isOverlayVisible = true;
         this.controlPanel.setHidden(true);
+        if (this.gestureController) {
+            this.gestureController.setEnabled(false);
+        }
         this.dialogManager.showGameOver(score);
         if (recordAlreadySaved) {
             this.dialogManager.confirmRecordSaved();
@@ -171,6 +198,9 @@ export class GameController {
     showLeaderboard() {
         this.isOverlayVisible = true;
         this.controlPanel.setHidden(true);
+        if (this.gestureController) {
+            this.gestureController.setEnabled(false);
+        }
         const records = this.leaderboardRepository.getRecords(this.leaderboardKey);
         this.dialogManager.showLeaderboard(records);
     }

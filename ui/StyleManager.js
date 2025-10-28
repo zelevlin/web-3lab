@@ -183,26 +183,6 @@ body {
     background-color: #9f8b76;
 }
 
-.control-panel__mobile {
-    display: none;
-    gap: 8px;
-}
-
-.control-panel[data-disabled="true"] .control-panel__mobile-button {
-    pointer-events: none;
-    opacity: 0.5;
-}
-
-.control-panel__mobile-button {
-    padding: 14px;
-    border-radius: 50%;
-    border: none;
-    background-color: #8f7a66;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-}
-
 .dialog-overlay {
     position: fixed;
     inset: 0;
@@ -314,29 +294,6 @@ body {
     .board {
         width: 100%;
         padding: 12px;
-    }
-    .control-panel__mobile {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-        justify-items: center;
-        align-items: center;
-    }
-    .control-panel__mobile-button--up {
-        grid-column: 2;
-        grid-row: 1;
-    }
-    .control-panel__mobile-button--left {
-        grid-column: 1;
-        grid-row: 2;
-    }
-    .control-panel__mobile-button--down {
-        grid-column: 2;
-        grid-row: 2;
-    }
-    .control-panel__mobile-button--right {
-        grid-column: 3;
-        grid-row: 2;
     }
 }
 `;

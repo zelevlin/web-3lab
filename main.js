@@ -7,6 +7,7 @@ import { BoardView } from './ui/BoardView.js';
 import { DialogManager } from './ui/DialogManager.js';
 import { ControlPanel } from './ui/ControlPanel.js';
 import { StyleManager } from './ui/StyleManager.js';
+import { GestureController } from './ui/GestureController.js';
 
 const styleManager = new StyleManager();
 styleManager.inject();
@@ -18,6 +19,7 @@ const engine = new GameEngine(scoreManager);
 const boardView = new BoardView(document);
 const dialogManager = new DialogManager(document);
 const controlPanel = new ControlPanel(document);
+const gestureController = new GestureController(boardView.getBoardElement());
 
 const controller = new GameController({
     engine,
@@ -25,6 +27,7 @@ const controller = new GameController({
     boardView,
     dialogManager,
     controlPanel,
+    gestureController,
     stateRepository,
     leaderboardRepository,
     storageKey: 'game-2048-state',

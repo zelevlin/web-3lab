@@ -71,6 +71,10 @@ export class BoardView {
         this.renderGridBackground(this.size);
     }
 
+    getBoardElement() {
+        return this.boardElement;
+    }
+
     createScorePanel() {
         const panel = this.document.createElement('section');
         panel.className = 'score-panel';
