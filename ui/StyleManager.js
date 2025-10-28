@@ -11,6 +11,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: stretch;
+    overflow: hidden;
+    touch-action: none;
 }
 
 .game-root {
