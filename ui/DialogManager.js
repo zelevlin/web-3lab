@@ -20,6 +20,7 @@ export class DialogManager {
     }
 
     initialize() {
+        // Создаём обе модальные панели и добавляем их в общий оверлей.
         this.gameOverDialog = this.createGameOverDialog();
         this.leaderboardDialog = this.createLeaderboardDialog();
         this.overlay.appendChild(this.gameOverDialog);
@@ -55,6 +56,7 @@ export class DialogManager {
         this.saveButton.className = 'dialog__button';
         this.saveButton.textContent = 'Сохранить результат';
         this.saveButton.disabled = true;
+        // Пока поле имени пустое, сохранение заблокировано.
         this.saveButton.addEventListener('click', () => {
             const name = this.nameInput.value.trim();
             if (name.length === 0) {
@@ -151,6 +153,7 @@ export class DialogManager {
     }
 
     emitSave(name) {
+        // Уведомляем всех подписчиков о необходимости сохранить рекорд.
         for (let index = 0; index < this.saveCallbacks.length; index += 1) {
             this.saveCallbacks[index](name);
         }
@@ -183,6 +186,7 @@ export class DialogManager {
     }
 
     confirmRecordSaved() {
+        // После успешного сохранения показываем подтверждение и скрываем ввод.
         this.messageNode.textContent = 'Ваш рекорд сохранён.';
         this.nameInput.style.display = 'none';
         this.saveButton.style.display = 'none';
@@ -224,6 +228,7 @@ export class DialogManager {
     }
 
     hide() {
+        // Скрываем оверлей и обе панели.
         this.overlay.classList.remove('dialog-overlay--visible');
         this.hideDialog(this.gameOverDialog);
         this.hideDialog(this.leaderboardDialog);

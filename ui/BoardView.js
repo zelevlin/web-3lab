@@ -30,6 +30,7 @@ export class BoardView {
         this.size = 4;
         this.createLayout();
         window.addEventListener('resize', () => {
+            // При изменении размера окна пересчитываем позиционирование плиток.
             this.refreshMetrics();
             this.refreshTilePositions();
         });
@@ -114,6 +115,7 @@ export class BoardView {
     }
 
     refreshMetrics() {
+        // Gap и размер плитки рассчитываем исходя из текущей ширины контейнера.
         const gap = getComputedStyle(this.boardElement).getPropertyValue('--grid-gap');
         const numericGap = Number.parseFloat(gap) || 12;
         const boardSize = this.boardElement.clientWidth;
@@ -138,6 +140,7 @@ export class BoardView {
     }
 
     render(snapshot) {
+        // Меняем сетку, если размер вдруг изменился (на будущее).
         const sizeChanged = this.size !== snapshot.size;
         this.size = snapshot.size;
         if (this.boardElement) {
@@ -167,6 +170,7 @@ export class BoardView {
             currentIds[tile.id] = true;
             this.upsertTile(tile);
         }
+        // Удаляем DOM-элементы, которых больше нет в снимке.
         const existingIds = Object.keys(this.tileElements);
         for (let index = 0; index < existingIds.length; index += 1) {
             const id = existingIds[index];
@@ -205,6 +209,7 @@ export class BoardView {
     }
 
     applyValueStyle(element, value) {
+        // Сбрасываем прошлые классы цвета.
         const classesToRemove = [];
         element.classList.forEach((className) => {
             if (className.startsWith('tile--value-')) {
@@ -217,6 +222,7 @@ export class BoardView {
         const modifierClass = `tile--value-${value}`;
         element.classList.add(modifierClass);
 
+        // Цвет фона подбираем из заготовленной таблицы.
         const background = TILE_COLORS[value] || '#3c3a32';
         element.style.backgroundColor = background;
         element.style.color = value <= 4 ? '#776e65' : '#f9f6f2';
@@ -243,6 +249,7 @@ export class BoardView {
             element.style.setProperty('--tile-scale', '1');
         };
         if (tile && tile.justMerged && hasPrevious && !isNewElement) {
+            // При слиянии запускаем анимацию «призрака», а сам тайл перемещаем без скачка.
             this.animateMergeWithGhost(tile, previousPosition, targetOffset);
             element.classList.remove('tile--moving');
             applyTarget();

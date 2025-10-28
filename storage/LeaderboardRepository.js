@@ -15,6 +15,7 @@ export class LeaderboardRepository {
             }
             return [];
         } catch (error) {
+            // В случае ошибок возвращаем пустой массив, чтобы UI мог отобразить заглушку.
             return [];
         }
     }
@@ -22,6 +23,7 @@ export class LeaderboardRepository {
     addRecord(key, record) {
         const records = this.getRecords(key);
         records.push(record);
+        // Сортируем по очкам, а затем по дате (свежие выше).
         records.sort((first, second) => {
             if (second.score !== first.score) {
                 return second.score - first.score;
@@ -29,6 +31,7 @@ export class LeaderboardRepository {
             return new Date(second.date).getTime() - new Date(first.date).getTime();
         });
         while (records.length > 10) {
+            // Храним только топ-10 записей.
             records.pop();
         }
         this.saveRecords(key, records);

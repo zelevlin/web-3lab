@@ -5,6 +5,7 @@ export class ScoreManager {
     }
 
     reset() {
+        // Сбрасываем только текущий счёт, рекорд остаётся прежним.
         this.current = 0;
     }
 
@@ -12,6 +13,7 @@ export class ScoreManager {
         if (points > 0) {
             this.current += points;
             if (this.current > this.best) {
+                // Обновляем лучший результат по факту.
                 this.best = this.current;
             }
         }
@@ -26,6 +28,7 @@ export class ScoreManager {
     }
 
     getSnapshot() {
+        // Возвращаем копию значений, чтобы UI не менял их напрямую.
         return {
             current: this.current,
             best: this.best

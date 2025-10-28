@@ -12,8 +12,10 @@ import { GestureController } from './ui/GestureController.js';
 const styleManager = new StyleManager();
 styleManager.inject();
 
+// Заголовок страницы генерируем динамически, чтобы файл index.html оставался минимальным.
 document.title = '2048';
 
+// Инициализируем вспомогательные объекты.
 const stateRepository = new StateRepository(window.localStorage);
 const leaderboardRepository = new LeaderboardRepository(window.localStorage);
 const scoreManager = new ScoreManager();
@@ -23,6 +25,7 @@ const dialogManager = new DialogManager(document);
 const controlPanel = new ControlPanel(document);
 const gestureController = new GestureController(boardView.getBoardElement());
 
+// Основной контроллер получает ссылки на все модули и связывает их между собой.
 const controller = new GameController({
     engine,
     scoreManager,
@@ -36,4 +39,5 @@ const controller = new GameController({
     leaderboardKey: 'game-2048-leaderboard'
 });
 
+// Запускаем игру.
 controller.initialize();

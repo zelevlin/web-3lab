@@ -1,3 +1,4 @@
+// Центральный CSS хранится строкой, чтобы инъецировать стили без внешних файлов.
 const STYLES = `
 :root {
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -313,6 +314,7 @@ export class StyleManager {
         if (this.isInjected) {
             return;
         }
+        // Добавляем <style> в document.head только один раз за жизненный цикл приложения.
         const styleElement = document.createElement('style');
         styleElement.setAttribute('data-origin', 'game-2048-styles');
         styleElement.textContent = STYLES;

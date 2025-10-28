@@ -1,6 +1,8 @@
 export class GestureController {
     constructor(targetElement, threshold = 28) {
+        // Контроллер навешивается на игровое поле и генерирует направления по движению пальца.
         this.targetElement = targetElement;
+        // Минимальная дистанция свайпа, после которой считаем жест валидным.
         this.threshold = threshold;
         this.callbacks = [];
         this.enabled = true;
@@ -31,6 +33,7 @@ export class GestureController {
     setEnabled(isEnabled) {
         this.enabled = isEnabled;
         if (!isEnabled) {
+            // При блокировке жестов очищаем состояние.
             this.reset();
         }
     }
@@ -57,6 +60,7 @@ export class GestureController {
         const deltaX = this.lastPoint.x - this.startPoint.x;
         const deltaY = this.lastPoint.y - this.startPoint.y;
         if (Math.abs(deltaX) > this.threshold || Math.abs(deltaY) > this.threshold) {
+            // Когда жест достаточно длинный, блокируем прокрутку.
             event.preventDefault();
         }
     }
@@ -101,6 +105,7 @@ export class GestureController {
     }
 
     emit(direction) {
+        // Рассылаем событие всем подписчикам.
         for (let index = 0; index < this.callbacks.length; index += 1) {
             this.callbacks[index](direction);
         }

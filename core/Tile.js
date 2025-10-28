@@ -2,6 +2,7 @@ export class Tile {
     static lastId = 0;
 
     constructor(row, column, value, options = {}) {
+        // Генерируем уникальный идентификатор, чтобы отслеживать тайл при рендере.
         this.id = Tile.generateId();
         this.row = row;
         this.column = column;
@@ -17,6 +18,7 @@ export class Tile {
     }
 
     setPosition(row, column) {
+        // Сохраняем предыдущие координаты для плавной анимации.
         this.previousPosition = { row: this.row, column: this.column };
         this.row = row;
         this.column = column;

@@ -11,24 +11,34 @@ export class GameController {
         storageKey,
         leaderboardKey
     }) {
+        // Игровой движок содержит бизнес-логику перемещений и слияний.
         this.engine = engine;
+        // ScoreManager отвечает за подсчёт текущего и лучшего счёта.
         this.scoreManager = scoreManager;
+        // BoardView занимается визуализацией состояния в DOM.
         this.boardView = boardView;
+        // DialogManager управляет модальными окнами окончания игры и таблицы лидеров.
         this.dialogManager = dialogManager;
+        // ControlPanel предоставляет кнопки управления.
         this.controlPanel = controlPanel;
+        // GestureController реагирует на свайпы, если доступен (десктопу он не нужен).
         this.gestureController = gestureController || null;
+        // Репозиторий состояния инкапсулирует работу с localStorage.
         this.stateRepository = stateRepository;
+        // Репозиторий лидеров хранит и сортирует результаты.
         this.leaderboardRepository = leaderboardRepository;
         this.storageKey = storageKey;
         this.leaderboardKey = leaderboardKey;
         this.isOverlayVisible = false;
         this.isRecordSaved = false;
+        // Привязываем обработчик клавиатуры к экземпляру, чтобы позже удалить слушатель.
         this.keyboardHandler = (event) => {
             this.handleKeydown(event);
         };
     }
 
     initialize() {
+        // Панель управления крепим к корневому узлу BoardView.
         this.controlPanel.attach(this.boardView.root);
         this.registerControlPanelHandlers();
         this.registerDialogHandlers();
@@ -38,6 +48,7 @@ export class GameController {
     }
 
     registerControlPanelHandlers() {
+        // Переназначаем кнопки панели на методы контроллера.
         this.controlPanel.onNewGame(() => {
             this.startNewGame();
         });
@@ -50,6 +61,7 @@ export class GameController {
     }
 
     registerDialogHandlers() {
+        // Диалог сохранения результата триггерит вызовы репозитория.
         this.dialogManager.onSave((name) => {
             this.saveRecord(name);
         });
@@ -79,14 +91,17 @@ export class GameController {
         if (!this.gestureController) {
             return;
         }
+        // Жесты обрабатывают только направления, сами координаты игре не нужны.
         this.gestureController.onDirection((direction) => {
             this.handleMove(direction);
         });
     }
 
     restoreState() {
+        // При старте пытаемся восстановить сохранённую игру.
         const state = this.stateRepository.loadState(this.storageKey);
         if (!state) {
+            // Нет сохранений — создаём новую игру.
             const snapshot = this.engine.startNewGame();
             this.boardView.render(snapshot);
             this.controlPanel.setUndoEnabled(false);
@@ -101,6 +116,7 @@ export class GameController {
         }
         this.isRecordSaved = Boolean(state.isRecordSaved);
         this.engine.restore(state.engine);
+        // После восстановления рендерим снимок и приводим интерфейс в актуальное состояние.
         const snapshot = this.engine.getSnapshot();
         this.boardView.render(snapshot);
         const undoAvailable = this.engine.history && this.engine.history.length > 0 && snapshot.status !== 'over';
@@ -155,8 +171,10 @@ export class GameController {
 
     handleMove(direction) {
         if (this.isOverlayVisible) {
+            // Пока открыто модальное окно, ходить нельзя.
             return;
         }
+        // Просим движок выполнить ход и проверяем, были ли изменения.
         const result = this.engine.move(direction);
         if (!result || !result.moved) {
             return;
@@ -174,6 +192,7 @@ export class GameController {
         if (this.isOverlayVisible) {
             return;
         }
+        // Undo берёт предыдущее состояние из стека истории.
         const snapshot = this.engine.undo();
         if (!snapshot) {
             return;
@@ -189,6 +208,7 @@ export class GameController {
         if (this.gestureController) {
             this.gestureController.setEnabled(false);
         }
+        // Показываем диалог и, если рекорд уже сохранён, прячем поле ввода.
         this.dialogManager.showGameOver(score);
         if (recordAlreadySaved) {
             this.dialogManager.confirmRecordSaved();
@@ -201,6 +221,7 @@ export class GameController {
         if (this.gestureController) {
             this.gestureController.setEnabled(false);
         }
+        // Берём отсортированный список и передаём во view.
         const records = this.leaderboardRepository.getRecords(this.leaderboardKey);
         this.dialogManager.showLeaderboard(records);
     }
@@ -222,6 +243,7 @@ export class GameController {
     }
 
     saveState() {
+        // Сохраняем сериализованное состояние в localStorage.
         const state = {
             engine: this.engine.serialize(),
             isRecordSaved: this.isRecordSaved

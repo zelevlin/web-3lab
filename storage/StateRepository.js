@@ -9,8 +9,10 @@ export class StateRepository {
             if (!raw) {
                 return null;
             }
+            // Сохраняем данные в JSON, поэтому при чтении выполняем парсинг.
             return JSON.parse(raw);
         } catch (error) {
+            // Повреждённые данные игнорируем, чтобы не блокировать запуск игры.
             return null;
         }
     }

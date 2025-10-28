@@ -12,6 +12,7 @@ export class GameEngine {
     }
 
     startNewGame() {
+        // Полностью сбрасываем сетку и счёт перед новым матчем.
         this.grid = new Grid(this.size);
         this.history = [];
         this.scoreManager.reset();
@@ -24,6 +25,7 @@ export class GameEngine {
     }
 
     getInitialTileCount() {
+        // В стартовом состоянии появляется от одной до трёх плиток.
         const minimum = 1;
         const maximum = 3;
         return minimum + Math.floor(Math.random() * (maximum - minimum + 1));
@@ -33,6 +35,7 @@ export class GameEngine {
         if (!this.grid.cellsAvailable()) {
             return null;
         }
+        // Генерируем значение плитки с вероятностью 90% для двойки.
         const value = Math.random() < 0.9 ? 2 : 4;
         const cell = this.grid.randomAvailableCell();
         if (!cell) {
@@ -47,6 +50,7 @@ export class GameEngine {
         if (this.status === 'over') {
             return { moved: false, status: this.status };
         }
+        // Преобразуем направление в вектор смещения по сетке.
         const vector = this.getVector(direction);
         if (!vector) {
             return { moved: false, status: this.status };
@@ -76,6 +80,7 @@ export class GameEngine {
                 const nextCell = this.getCell(positions.next.row, positions.next.column);
 
                 if (nextCell && nextCell.value === tile.value && !nextCell.justMerged) {
+                    // Зафиксирован контакт с плиткой того же значения — объединяем.
                     this.grid.removeTile(tile);
                     nextCell.updateValue(nextCell.value * 2);
                     nextCell.markAsMerged();
@@ -95,6 +100,7 @@ export class GameEngine {
         }
 
         if (!moved) {
+            // Не было перемещений — досрочно выходим.
             return { moved: false, status: this.status };
         }
 
@@ -111,6 +117,7 @@ export class GameEngine {
         }
 
         if (!this.movesAvailable()) {
+            // Невозможно сделать следующий ход — игра окончена.
             this.status = 'over';
         } else if (this.status !== 'won') {
             this.status = 'playing';
@@ -131,6 +138,7 @@ export class GameEngine {
             status: state.status
         });
         if (this.history.length > this.maximumHistoryLength) {
+            // Поддерживаем ограниченную глубину истории.
             this.history.shift();
         }
     }
@@ -149,6 +157,7 @@ export class GameEngine {
         const rows = [];
         const columns = [];
 
+        // Заполняем массивы индексов, которые позже, при необходимости, разворачиваем.
         for (let index = 0; index < this.size; index += 1) {
             rows.push(index);
             columns.push(index);
@@ -173,6 +182,7 @@ export class GameEngine {
             const nextRow = currentRow + vector.row;
             const nextColumn = currentColumn + vector.column;
             if (!this.grid.isWithinBounds(nextRow, nextColumn) || !this.grid.cellAvailable(nextRow, nextColumn)) {
+                // Дальше или граница, или занятая клетка — останавливаемся.
                 break;
             }
             previous.row = nextRow;
@@ -202,6 +212,7 @@ export class GameEngine {
         if (this.grid.cellsAvailable()) {
             return true;
         }
+        // Свободных клеток нет — ищем потенциальные слияния.
         return this.tileMatchesAvailable();
     }
 
@@ -222,6 +233,7 @@ export class GameEngine {
                     const vector = directions[index];
                     const cell = this.getCell(row + vector.row, column + vector.column);
                     if (cell && cell.value === tile.value) {
+                        // Нашли пару одинаковых соседей.
                         return true;
                     }
                 }
@@ -258,6 +270,7 @@ export class GameEngine {
             return null;
         }
         const previous = this.history.pop();
+        // Копируем сетку, чтобы не привязываться к объектам из истории.
         this.grid = previous.grid.clone();
         this.scoreManager.setCurrent(previous.score);
         if (previous.score > this.scoreManager.best) {
@@ -273,6 +286,7 @@ export class GameEngine {
             status: this.status,
             score: this.scoreManager.getSnapshot(),
             history: this.history.map((item) => ({
+                // Каждое состояние истории сериализуем отдельно.
                 grid: item.grid.serialize(),
                 score: item.score,
                 status: item.status

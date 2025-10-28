@@ -51,6 +51,7 @@ export class ControlPanel {
     }
 
     attach(parent) {
+        // Добавляем панель в корневой элемент, когда контроллер инициализируется.
         parent.appendChild(this.root);
     }
 
