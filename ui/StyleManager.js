@@ -112,9 +112,10 @@ body {
     justify-content: center;
     font-weight: 700;
     font-size: 28px;
-    transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    transition: transform 0.18s ease-out, background-color 0.15s ease-in-out;
     will-change: transform;
     z-index: 2;
+    transform: translate(var(--tile-x, 0px), var(--tile-y, 0px)) scale(var(--tile-scale, 1));
 }
 
 .tile--ghost {
@@ -123,11 +124,11 @@ body {
 }
 
 .tile--new {
-    animation: tile-pop 0.2s ease;
+    animation: tile-pop 0.18s ease;
 }
 
 .tile--merged {
-    animation: tile-merge 0.25s ease;
+    animation: tile-merge 0.22s ease;
 }
 
 .tile__value {
@@ -135,13 +136,14 @@ body {
 }
 
 @keyframes tile-pop {
-    0% { transform: scale(0.5); }
-    100% { transform: scale(1); }
+    0% { transform: translate(var(--tile-x, 0px), var(--tile-y, 0px)) scale(0.6); }
+    100% { transform: translate(var(--tile-x, 0px), var(--tile-y, 0px)) scale(1); }
 }
 
 @keyframes tile-merge {
-    0% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+    0% { transform: translate(var(--tile-x, 0px), var(--tile-y, 0px)) scale(1); }
+    50% { transform: translate(var(--tile-x, 0px), var(--tile-y, 0px)) scale(1.05); }
+    100% { transform: translate(var(--tile-x, 0px), var(--tile-y, 0px)) scale(1); }
 }
 
 .control-panel {

@@ -233,22 +233,28 @@ export class BoardView {
             Number.isFinite(previousPosition.row) &&
             Number.isFinite(previousPosition.column);
         const targetOffset = this.calculateOffset(row, column);
+        const applyTarget = () => {
+            element.style.setProperty('--tile-x', `${targetOffset.x}px`);
+            element.style.setProperty('--tile-y', `${targetOffset.y}px`);
+            element.style.setProperty('--tile-scale', '1');
+        };
         if (tile && tile.justMerged && hasPrevious && !isNewElement) {
             this.animateMergeWithGhost(tile, previousPosition, targetOffset);
             element.classList.remove('tile--moving');
-            element.style.transform = `translate(${targetOffset.x}px, ${targetOffset.y}px)`;
+            applyTarget();
             return;
         }
         if (hasPrevious) {
             const startOffset = this.calculateOffset(previousPosition.row, previousPosition.column);
-            element.style.transform = `translate(${startOffset.x}px, ${startOffset.y}px)`;
+            element.style.setProperty('--tile-x', `${startOffset.x}px`);
+            element.style.setProperty('--tile-y', `${startOffset.y}px`);
             element.classList.add('tile--moving');
             requestAnimationFrame(() => {
-                element.style.transform = `translate(${targetOffset.x}px, ${targetOffset.y}px)`;
+                applyTarget();
             });
         } else {
             element.classList.remove('tile--moving');
-            element.style.transform = `translate(${targetOffset.x}px, ${targetOffset.y}px)`;
+            applyTarget();
         }
     }
 
@@ -269,11 +275,13 @@ export class BoardView {
         valueNode.textContent = String(sourceValue);
         ghost.appendChild(valueNode);
         this.applyValueStyle(ghost, sourceValue);
-        ghost.style.transform = `translate(${startOffset.x}px, ${startOffset.y}px)`;
+        ghost.style.setProperty('--tile-x', `${startOffset.x}px`);
+        ghost.style.setProperty('--tile-y', `${startOffset.y}px`);
         this.tileLayer.appendChild(ghost);
         ghost.getBoundingClientRect();
         requestAnimationFrame(() => {
-            ghost.style.transform = `translate(${targetOffset.x}px, ${targetOffset.y}px)`;
+            ghost.style.setProperty('--tile-x', `${targetOffset.x}px`);
+            ghost.style.setProperty('--tile-y', `${targetOffset.y}px`);
         });
         const removeGhost = () => {
             if (ghost && ghost.parentNode) {
