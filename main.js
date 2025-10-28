@@ -12,6 +12,8 @@ import { GestureController } from './ui/GestureController.js';
 const styleManager = new StyleManager();
 styleManager.inject();
 
+document.title = '2048';
+
 const stateRepository = new StateRepository(window.localStorage);
 const leaderboardRepository = new LeaderboardRepository(window.localStorage);
 const scoreManager = new ScoreManager();
